@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">辞职信</string>
+    <string name="agree">同意</string>
+    <string name="no_agree">不同意</string>
+    <string name="thank">谢谢老板～再见～👋</string>
+    <string name="resign_mail">辞职信</string>
+    <string name="my_order">我亲爱的领导：</string>
+    <string name="your_money_low">你这点钱让我很难办事啊</string>
+    <string name="my_name">辞职人：天天摸鱼的小职员</string>
+    <string name="licence">本demo仅供演示</string>
+</resources>

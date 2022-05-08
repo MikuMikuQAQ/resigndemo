@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        maven {
+            url "https://mhayo.asuscomm.com:8543/repository/maven-android/"
+        }
+//        gradlePluginPortal()
+//        google()
+//        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven {
+            url "https://mhayo.asuscomm.com:8543/repository/maven-android/"
+        }
+//        google()
+//        mavenCentral()
+    }
+}
+rootProject.name = "resign_demo"
+include ':app'
