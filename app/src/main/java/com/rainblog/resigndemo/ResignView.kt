@@ -1,11 +1,13 @@
 package com.rainblog.resigndemo
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.widget.Toast
 import kotlin.random.Random
 
 class ResignView : SurfaceView, SurfaceHolder.Callback {
@@ -16,6 +18,7 @@ class ResignView : SurfaceView, SurfaceHolder.Callback {
     private val paint = Paint()
     private val mPaint = Paint()
     private var clickNum = 0
+    private val list = mutableListOf<MutableMap<String, Float>>()
 
     constructor(context: Context?) : super(context) {initd()}
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {initd()}
@@ -47,21 +50,35 @@ class ResignView : SurfaceView, SurfaceHolder.Callback {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
+            MotionEvent.ACTION_UP -> performClick()
             MotionEvent.ACTION_DOWN -> {
-//                if (clickNum <= 5) {
+                if (clickNum <= 10) {
                     val rect = Rect(pointX.toInt(), pointY.toInt(), pointX.toInt() + dpToPx(88).toInt(), pointY.toInt() + dpToPx(44).toInt())
                     when {
                         rect.contains(event.x.toInt(), event.y.toInt()) -> {
-//                            if (clickNum >= 5) {
-//                                pullMax()
-//                            } else {
-                                clickNum ++
+                            if (clickNum >= 10) {
+                                pushMax()
+                            } else {
                                 Thread { draw() }.start()
-//                            }
+                            }
+                            clickNum ++
                         }
                         else -> {}
                     }
-//                } else {}
+                } else {
+                    list.forEach {
+                        val pointX = it["pointX"]?:0f
+                        val pointY = it["pointY"]?:0f
+                        val rect = Rect(pointX.toInt(), pointY.toInt(), pointX.toInt() + dpToPx(88).toInt(), pointY.toInt() + dpToPx(44).toInt())
+                        when {
+                            rect.contains(event.x.toInt(), event.y.toInt()) -> {
+                                Toast.makeText(context, context.getString(R.string.thank), Toast.LENGTH_SHORT).show()
+                                (context as Activity).finish()
+                            }
+                            else -> {}
+                        }
+                    }
+                }
             }
             else -> {}
         }
@@ -91,10 +108,10 @@ class ResignView : SurfaceView, SurfaceHolder.Callback {
         }
     }
 
-    private fun pullMax() {
+    private fun pushMax() {
         isRun = true
         Thread {
-            val list = mutableListOf<MutableMap<String, Float>>()
+            paint.color = Color.argb(0xff, 0x01, 0xB8, 0xD1)
             while (isRun) {
                 val map = mutableMapOf<String, Float>()
                 holder?.lockCanvas()?.let { canvas ->
@@ -106,23 +123,26 @@ class ResignView : SurfaceView, SurfaceHolder.Callback {
                     list.add(map)
 
                     list.forEach {
+                        pointX = it["pointX"] ?:0f
+                        pointY = it["pointY"] ?:0f
+
                         canvas.drawRoundRect(
-                            it["pointX"] ?:0f,
-                            it["pointY"] ?:0f,
-                            it["pointX"] ?:0f+dpToPx(88),
-                            it["pointY"] ?:0f+dpToPx(44),
+                            pointX,
+                            pointY,
+                            pointX+dpToPx(88),
+                            pointY+dpToPx(44),
                             8f, 8f, paint)
 
                         canvas.drawText(
                             context.getString(R.string.agree),
-                            it["pointX"] ?:0f+dpToPx(20),
-                            it["pointY"] ?:0f+dpToPx(28), mPaint)
+                            pointX+dpToPx(28),
+                            pointY+dpToPx(28), mPaint)
 
                     }
 
                     holder?.unlockCanvasAndPost(canvas)
                 }
-                Thread.sleep(1000)
+                Thread.sleep(500)
             }
         }.start()
     }
